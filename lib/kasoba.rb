@@ -50,13 +50,15 @@ optparse = OptionParser.new do |opt|
 
 end.parse!
 
+class FileNavigator
+	def initialize(root, extensions, start="0%", finish="100%")
+		extensionsPattern = extensions.nil?? "{.*,}" : ".{" + extensions.join(',') + "}" 
+		filePattern = File.join(root.nil?? "**" : File.join(root, "**")  , "*#{extensionsPattern}")
+		@files = Dir.glob(filePattern).select {|fileName| File.file?(fileName) }
+	end
+
+end
 regex = ARGV[0]
 replacement = ARGV[1]
-p options
-p regex, replacement
-extensions = options[:extensions].nil?? "{.*,}" : ".{" + options[:extensions].join(',') + "}" 
-filePattern = File.join(options[:dir].nil?? "**" : File.join(options[:dir], "**")  , "*#{extensions}")
-
-files = Dir.glob(filePattern).select {|fileName| File.file?(fileName) }
-p filePattern
-p files
+f = FileNavigator.new(options[:dir],options[:extensions],options[:start],options[:end])
+p f.inspect
