@@ -79,8 +79,21 @@ class FileNavigator
 		File.new(@fileNames[i], 'r')
 	end
 	def each
+		return to_enum if !block_given?
 		@fileNames.each do |fileName|
 			yield(File.new(fileName,'r'))
 		end
+	end
+	def collect
+		return to_enum if !block_given?
+		@fileNames.collect do |fileName|
+			yield(File.new(fileName, 'r'))
+		end 
+	end	
+	def map
+		return to_enum if !block_given?
+		@fileNames.map do |fileName|
+			yield(File.new(fileName, 'r'))
+		end 
 	end
 end
