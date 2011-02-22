@@ -73,7 +73,7 @@ class FileNavigator
 		@fileNames = Dir.glob(filePattern).select {|fileName| File.file?(fileName) }
 	end
 	def method_missing(name, *args)
-		@files.send(name,*args)	
+		@fileNames.send(name,*args)	
 	end
 	def [](i)
 		File.new(@fileNames[i], 'r')
