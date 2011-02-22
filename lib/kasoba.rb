@@ -1,3 +1,6 @@
+require 'rubygems'
+require 'highline/import'
+
 class Kasoba
 	attr_reader :files
 	def initialize(options, regex, replacement)
@@ -31,9 +34,17 @@ class Kasoba
 					cline = line.clone
 					while ((t = cline.partition(@regex))[2] != "") do
 						cline = t[2]
-						if !@replacement.nil?
-							tmpFile.puts t[0] + @replacement + t[2]
-						end				
+						oldline = t.join
+						say("<%= color( 'Oldline: #{oldline}' ,:red )%>")
+						localreplacement = @replacement.nil?? ask('Type substitution string') : @replacement
+						newline = t[0] + localreplacement + t[2]
+						say("<%= color( 'Newline: #{newline}' ,:green )%>")
+
+						if agree("Agree?")
+							tmpFile.puts newline
+						else
+							tmpFile.puts oldline
+						end
 					end
 					tmpFile.puts line if !line.match(@regex) 
 				end
