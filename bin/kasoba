@@ -1,0 +1,46 @@
+#!/usr/bin/env ruby
+$LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
+
+require 'optparse'
+require 'kasoba'
+options = {}
+optparse = OptionParser.new do |opt|
+	opt.on_tail('-h', '--help', 'Show help') do
+		puts opt
+		exit
+	end
+	options[:multiple] = false	
+	opt.on('-m',  'Have regex work over multiple lines') do
+		options[:multiple] = true
+	end
+	
+	options[:dir] = nil 
+	opt.on('-d PATH', 'Path whose ancestor files are to be explored') do |path|
+		options[:dir] = path
+	end
+
+	options[:extensions] = nil
+	opt.on('--extensions x,y,z', Array, 'List of extensions to process') do |list|
+		options[:extensions] = list
+	end
+
+	options[:editor] = ENV['EDITOR']
+	opt.on('--editor EDITOR', 'Specify an editor. If omitted default to $EDITOR enviroment variable') do |editor|
+		options[:editor] = editor
+	end 
+
+	options[:count] = false
+	opt.on('--count', 'Print out number of times places in the codebase match the query') do
+		options[:count] = true
+	end
+	
+
+end.parse!
+regex = ARGV[0]
+replacement = ARGV[1]
+p options
+kasoba = Kasoba.new(options,regex,replacement)
+p kasoba.inspect
+kasoba.files.each { |f| p f.inspect }
+p kasoba.count
+kasoba.replace

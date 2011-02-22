@@ -1,64 +1,66 @@
-#!/usr/bin/env ruby
-
-require 'optparse'
-
-options = {}
-optparse = OptionParser.new do |opt|
-	opt.on_tail('-h', '--help', 'Show help') do
-		puts opt
-		exit
-	end
-	options[:multiple] = false	
-	opt.on('-m',  'Have regex work over multiple lines') do
-		options[:multiple] = true
-	end
-	
-	options[:dir] = nil 
-	opt.on('-d PATH', 'Path whose ancestor files are to be explored') do |path|
-		options[:dir] = path
+class Kasoba
+	attr_reader :files
+	def initialize(options, regex, replacement)
+		@files = FileNavigator.new(options[:dir],options[:extensions])
+		@count = options[:count]
+		@editor = options[:editor]
+		@regex = regex
+		@replacement = replacement
+		
 	end
 
-	options[:start] = "0%"
-	opt.on('--start START', 'A percentage of the way through to start exploring') do |start|
-		options[:start] = start
+	def count
+		num = 0
+		@files.each do |file|
+			file.each do |line|
+				cline = line.clone
+				while (t = cline.partition(@regex)[2]) != "" do
+					cline = t
+					num = num +1
+				end
+			end
+			file.close
+		end
+		return num
 	end
 
-	options[:end] = "100%"
-	opt.on('--end END', 'A percentage of the way through at which to end exploring') do |finish|
-		options[:end] = finish 
+	def replace
+		@files.each do |file|
+			File.open(file.path + ".temp","w") do |tmpFile|
+				file.each do |line|
+					cline = line.clone
+					while ((t = cline.partition(@regex))[2] != "") do
+						cline = t[2]
+						if !@replacement.nil?
+							tmpFile.puts t[0] + @replacement + t[2]
+						end				
+					end
+					tmpFile.puts line if !line.match(@regex) 
+				end
+			end
+			filePath = file.path	
+			file.close
+			File.delete(filePath)
+			File.rename(filePath + ".temp", filePath)
+		end
 	end
-
-	options[:extensions] = nil
-	opt.on('--extensions x,y,z', Array, 'List of extensions to process') do |list|
-		options[:extensions] = list
-	end
-
-	options[:editor] = ENV['EDITOR']
-	opt.on('--editor EDITOR', 'Specify an editor. If omitted default to $EDITOR enviroment variable') do |editor|
-		options[:editor] = editor
-	end 
-
-	options[:count] = false
-	opt.on('--count', 'Print out number of times places in the codebase match the query') do
-		options[:count] = true
-	end
-	
-	options[:test] = false
-	opt.on('--test', 'Run the unit tests') do
-		options[:test] = true
-	end
-
-end.parse!
+end
 
 class FileNavigator
-	def initialize(root, extensions, start="0%", finish="100%")
+	def initialize(root, extensions)
 		extensionsPattern = extensions.nil?? "{.*,}" : ".{" + extensions.join(',') + "}" 
 		filePattern = File.join(root.nil?? "**" : File.join(root, "**")  , "*#{extensionsPattern}")
-		@files = Dir.glob(filePattern).select {|fileName| File.file?(fileName) }
+		@fileNames = Dir.glob(filePattern).select {|fileName| File.file?(fileName) }
 	end
-
+	def method_missing(name, *args)
+		@files.send(name,*args)	
+	end
+	def [](i)
+		File.new(@fileNames[i], 'r')
+	end
+	def each
+		@fileNames.each do |fileName|
+			yield(File.new(fileName,'r'))
+		end
+	end
 end
-regex = ARGV[0]
-replacement = ARGV[1]
-f = FileNavigator.new(options[:dir],options[:extensions],options[:start],options[:end])
-p f.inspect
