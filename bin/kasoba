@@ -38,9 +38,7 @@ optparse = OptionParser.new do |opt|
 end.parse!
 regex = ARGV[0]
 replacement = ARGV[1]
-p options
 kasoba = Kasoba.new(options,regex,replacement)
-p kasoba.inspect
-kasoba.files.each { |f| p f.inspect }
-p kasoba.count
-kasoba.replace
+#p kasoba.inspect
+#kasoba.files.each { |f| p f.inspect }
+kasoba.kasoba

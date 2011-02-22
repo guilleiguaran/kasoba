@@ -12,6 +12,15 @@ class Kasoba
 		
 	end
 
+	def kasoba
+		if @count == true
+			say("Counting ...")
+			p count
+		else
+			replace
+		end
+	end
+
 	def count
 		num = 0
 		@files.each do |file|
