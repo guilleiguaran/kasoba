@@ -36,9 +36,14 @@ optparse = OptionParser.new do |opt|
 	
 
 end.parse!
-regex = ARGV[0]
-replacement = ARGV[1]
-kasoba = Kasoba.new(options,regex,replacement)
-#p kasoba.inspect
-#kasoba.files.each { |f| p f.inspect }
-kasoba.kasoba
+begin
+	regex = ARGV[0]
+	replacement = ARGV[1]
+	p options[:editor]
+	kasoba = Kasoba.new(options,regex,replacement)
+	
+	p kasoba.inspect
+	kasoba.kasoba
+rescue SystemExit, Interrupt
+	exit	
+end

@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'highline/import'
+require 'rainbow'
 
 class Kasoba
 	attr_reader :files
@@ -26,7 +27,7 @@ class Kasoba
 		@files.each do |file|
 			file.each do |line|
 				cline = line.clone
-				while (t = cline.partition(@regex)[2]) != "" do
+				while ((t = cline.partition(@regex)[2]) != "") or (cline.match(@regex)) do
 					cline = t
 					num = num +1
 				end
@@ -39,29 +40,37 @@ class Kasoba
 	def replace
 		@files.each do |file|
 			File.open(file.path + ".temp","w") do |tmpFile|
-				file.each do |line|
-					cline = line.clone
-					while ((t = cline.partition(@regex))[2] != "") do
-						cline = t[2]
-						oldline = t.join
-						say("<%= color( 'Oldline: #{oldline}' ,:red )%>")
+				p file.path
+				fileContent = file.readlines.join				
+				while (((t = fileContent.partition(Regexp.new(@regex)))[2] != "") or t.join.length > 0)
+					if(t[2] != "")
+						tmpFile << t[0]
+						fileContent = t[2]	
+						oldline = t[0].split("\n").last.to_s + t[1]
+						puts "Oldline: " + oldline.color(:red)
 						localreplacement = @replacement.nil?? ask('Type substitution string') : @replacement
-						newline = t[0] + localreplacement + t[2]
-						say("<%= color( 'Newline: #{newline}' ,:green )%>")
-
-						if agree("Agree?")
-							tmpFile.puts newline
-						else
-							tmpFile.puts oldline
+						i = 1
+						t[1].match(@regex).captures.each do |capture|
+							localreplacement = localreplacement.gsub("\\#{i}" ,capture )
+							i = i + 1
 						end
-					end
-					tmpFile.puts line if !line.match(@regex) 
+						newline = t[0].split("\n").last.to_s + localreplacement + t[2].split("\n").first.to_s
+						puts "Newline: " + newline.color(:green)
+						if agree("Agree? y/n".color(:blue))
+							tmpFile << localreplacement
+						else
+							tmpFile << t[1]
+						end
+					else
+						fileContent = t[2]
+						tmpFile << t.join
+					end	
 				end
 			end
 			filePath = file.path	
 			file.close
 			File.delete(filePath)
-			File.rename(filePath + ".temp", filePath)
+			File.rename(filePath + ".temp", filePath)	
 		end
 	end
 end
