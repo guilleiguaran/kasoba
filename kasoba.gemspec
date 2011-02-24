@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.name        = "kasoba"
   s.version     = Kasoba::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["kasoba"]
+  s.authors     = ["Lacides Charris", "Guillermo Iguaran"]
   s.email       = ["lacidescharris@hotmail.es", "guilleiguaran@gmail.com"]
   s.homepage    = "https://github.com/guilleiguaran/kasoba"
   s.summary     = %q{Interactive tool for large scale code refactors}
