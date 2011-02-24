@@ -41,5 +41,5 @@ begin
 	p kasoba.inspect
 	kasoba.run
 rescue SystemExit, Interrupt
-	exit	
+  exit
 end
