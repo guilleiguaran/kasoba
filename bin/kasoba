@@ -9,12 +9,8 @@ optparse = OptionParser.new do |opt|
 		puts opt
 		exit
 	end
-	options[:multiple] = false	
-	opt.on('-m',  'Have regex work over multiple lines') do
-		options[:multiple] = true
-	end
 	
-	options[:dir] = nil 
+	options[:dir] = "/" 
 	opt.on('-d PATH', 'Path whose ancestor files are to be explored') do |path|
 		options[:dir] = path
 	end
@@ -43,7 +39,7 @@ begin
 	kasoba = Kasoba.new(options,regex,replacement)
 	
 	p kasoba.inspect
-	kasoba.kasoba
+	kasoba.run
 rescue SystemExit, Interrupt
 	exit	
 end

@@ -1,0 +1,23 @@
+= Kasoba
+
+Kasoba is a tool meant to assist programmers with large-scale code refactors.
+
+== Install
+    [sudo] gem install kasoba
+
+== History
+
+=== Version 0.01 beta - Current Version
+
+Basic functions implemented.
+
+== Usage
+Suposse you are depecrating the use of <center> tag. You'll make progress by running:
+    kasoba -d app_folder/ --extensions php,html '<center>(.*?)</center>' '<div style="text-align:center">\1</div>'
+
+Last two arguments are a regular expression and a substitution string. As you probably noticed already, kasoba supports match captures and you can include them in the substitution string.
+At each match you'll be shown a colored diff, and asked if you want to accept the change. 
+
+== Copyright
+
+Copyright (c) 2010-2011 Lacides Charris. See LICENSE for details.

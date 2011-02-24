@@ -13,7 +13,7 @@ class Kasoba
 		
 	end
 
-	def kasoba
+	def run 
 		if @count == true
 			say("Counting ...")
 			p count
