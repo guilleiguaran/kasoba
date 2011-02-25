@@ -7,16 +7,19 @@ Kasoba is a tool meant to assist programmers with large-scale code refactors.
 
 == History
 
-=== Version 0.0.2 - Current Version
+=== Version 0.0.4 - Current Version
 
 Basic functions implemented.
 
 == Usage
 Suppose you are depecrating the use of <center> tag. You'll make progress by running:
-    kasoba -d app_folder/ --extensions php,html '<center>(.*?)</center>' '<div style="text-align:center">\1</div>'
+    kasoba -d app_folder/ --extensions erb,html '<center>(.*?)</center>' '<div style="text-align:center">\1</div>'
+
+or suppose you are deprecating Model.find(:first, :conditions => {:username => @user} in favor of new Rails 3.0 finders
+    kasoba -d application/ --extensions rb '(.+).find(:first, :conditions => {(.+)}' '\1.where(\2).first'
 
 Last two arguments are a regular expression and a substitution string. As you probably noticed already, kasoba supports match captures and you can include them in the substitution string.
-At each match you'll be shown a colored diff, and asked if you want to accept the change. 
+At each match you'll be shown a colored diff, and asked if you want to accept the change.
 
 == Copyright
 
