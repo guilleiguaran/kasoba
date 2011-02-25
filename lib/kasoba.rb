@@ -4,14 +4,14 @@ require 'rainbow'
 
 class Kasoba
   attr_reader :files
-	def run 
-		if @count == true
-			say("Counting ...")
-			p count
-		else
-			replace
-		end
-	end
+  def run
+    if @count == true
+      say("Counting ...")
+      p count
+    else
+      replace
+    end
+  end
 
   def initialize(options, regex, replacement)
     @files = FileNavigator.new(options[:dir],options[:extensions])
